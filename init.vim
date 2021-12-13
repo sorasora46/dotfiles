@@ -61,7 +61,7 @@ Plug 'junegunn/fzf.vim'                                 "Fuzzy Finder
 Plug 'artur-shaik/vim-javacomplete2'                    "Autogenerate for Java
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}         "Autocomplete
-let g:coc_global_extensions = ['coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-tsserver', 'coc-java']
+let g:coc_global_extensions = ['coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-tsserver', 'coc-java', 'coc-clangd']
 
 Plug 'tpope/vim-commentary'                             "Auto Commenting
 
@@ -72,7 +72,7 @@ let g:everforest_enable_italic = 0
 let g:everforest_disable_italic_comment = 1
 let g:everforest_sign_column_background = 'none'
 let g:everforest_ui_contrast = 'high'
-let g:everforest_show_eob = 1
+let g:everforest_show_eob = 0
 let g:everforest_diagnostic_text_highlight = 1
 let g:everforest_diagnostic_line_highlight = 1
 let g:everforest_diagnostic_virtual_text = 'colored'
@@ -94,6 +94,7 @@ let g:airline#extensions#coc#warning_symbol = "\uf071 Warning: "
 
 let NERDTreeCustomOpenArgs={'file':{'where':'p','keepopen':1,'stay':1}}
 let NERDTreeShowHidden=1
+let g:NERDTreeWinPos="right"
 nnoremap <leader>nt :NERDTreeToggle<CR>
 
 " Coc setting
