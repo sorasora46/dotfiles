@@ -1,12 +1,14 @@
 syntax on
 filetype plugin indent on
+
+" ---------------------------- SET ----------------------------
 set tabstop=4 softtabstop=4
 set shiftwidth=4
 set expandtab
 set smartindent
 set autoindent
 set number
-" set relativenumber
+set relativenumber
 set nohlsearch
 set incsearch
 set hidden
@@ -33,11 +35,61 @@ set listchars=eol:↓,tab:\ \ ┊,trail:●,extends:…,precedes:…,space:·
 set list
 set cmdheight=2
 set shortmess+=c
-autocmd CompleteDone * pclose
-" Remove trailing whitespace
-autocmd BufWritePre * %s/\s\+$//e
+" ---------------------------- SET ----------------------------
+
+autocmd BufWritePre * %s/\s\+$//e " Remove trailing whitespace
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" ---------------------------- Essential Map ----------------------------
+inoremap aj <ESC>:w<CR>
+vnoremap aj <ESC>:w<CR>
+nnoremap <leader>w <ESC>:w<CR>
+
+nnoremap <C-c><C-f> :e ~/.config/nvim/init.vim<CR>
+
+nnoremap <leader>T :vsplit term://zsh<CR>i
+nnoremap <leader>t :term<CR>i
+tnoremap <ESC> <C-\><C-n>
+tnoremap <leader>E <C-c><C-\><C-n>iexit<Enter>
+nnoremap <leader>E i<C-c><C-\><C-n>iexit<Enter>
+
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+noremap <c-up> <c-w>+
+noremap <c-down> <c-w>-
+noremap <c-left> <c-w>>
+noremap <c-right> <c-w><
+
+nmap <A-d> :bd<CR>
+nmap <A-p> :bp<CR>
+nmap <A-n> :bn<CR>
+
+nnoremap <A-k> :m .-2<CR>==
+nnoremap <A-j> :m .+1<CR>==
+inoremap <C-k> <ESC>:m .-2<CR>==
+inoremap <C-j> <ESC>:m .+1<CR>==
+vnoremap K :m '<-2<CR>gv=gv
+vnoremap J :m '>+1<CR>gv=gv
+inoremap ;; <esc>A;<esc>;:w<CR>
+
+nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
+nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
+
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap J mzJ`z
+
+inoremap ( (<C-g>u
+inoremap [ [<C-g>u
+inoremap { {<C-g>u
+inoremap " "<C-g>u
+inoremap ' '<C-g>u
+inoremap < <<C-g>u
+" ---------------------------- Essential Map ----------------------------
 
 call plug#begin()
 
@@ -67,6 +119,20 @@ Plug 'tpope/vim-commentary'                             "Auto Commenting
 
 call plug#end()
 
+" Fuzzy Finder
+nnoremap <C-p> :Files<CR>
+
+" Autocomplete for Java
+nmap <F4> <Plug>(JavaComplete-Imports-AddSmart)
+imap <F4> <Plug>(JavaComplete-Imports-AddSmart)
+nmap <F5> <Plug>(JavaComplete-Imports-Add)
+imap <F5> <Plug>(JavaComplete-Imports-Add)
+nmap <F6> <Plug>(JavaComplete-Imports-AddMissing)
+imap <F6> <Plug>(JavaComplete-Imports-AddMissing)
+nmap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
+imap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
+
+" Theme settings
 let g:everforest_background = 'soft'
 let g:everforest_enable_italic = 0
 let g:everforest_disable_italic_comment = 1
@@ -82,6 +148,7 @@ colorscheme everforest
 
 let mapleader=" "
 
+" Airline settings
 let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled=1
 let g:airline#extensions#tabline#fnamemod = ':t'
@@ -92,12 +159,13 @@ let g:airline#extensions#coc#enabled = 1
 let g:airline#extensions#coc#error_symbol = "\uf06a Error: "
 let g:airline#extensions#coc#warning_symbol = "\uf071 Warning: "
 
+" Nerdtree settings
 let NERDTreeCustomOpenArgs={'file':{'where':'p','keepopen':1,'stay':1}}
 let NERDTreeShowHidden=1
 let g:NERDTreeWinPos="right"
 nnoremap <leader>nt :NERDTreeToggle<CR>
 
-" Coc setting
+" ---------------------------- Coc setting ----------------------------
 
 " Co" Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
@@ -259,52 +327,37 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-" Coc setting
+" ---------------------------- Coc setting ----------------------------
 
-nnoremap กก :!echo Hello<CR>
-
-nnoremap aj <ESC>:w<CR>
-inoremap aj <ESC>:w<CR>
-vnoremap aj <ESC>:w<CR>
-nnoremap <leader>w <ESC>:w<CR>
-" nnoremap <leader>f gg=G<C-o>
-
-nnoremap <C-c><C-f> :e ~/.config/nvim/init.vim<CR>
-
-nnoremap <leader>T :vsplit term://zsh<CR>i
-nnoremap <leader>t :term<CR>i
-tnoremap <ESC> <C-\><C-n>
-tnoremap <leader>E <C-c><C-\><C-n>iexit<Enter>
-nnoremap <leader>E i<C-c><C-\><C-n>iexit<Enter>
-
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-
-noremap <c-up> <c-w>+
-noremap <c-down> <c-w>-
-noremap <c-left> <c-w>>
-noremap <c-right> <c-w><
-
-nmap <A-d> :bd<CR>
-nmap <A-p> :bp<CR>
-nmap <A-n> :bn<CR>
-
-nnoremap <A-k> :m .-2<CR>==
-nnoremap <A-j> :m .+1<CR>==
-
-inoremap ;; <esc>A;<esc>;:w<CR>
-
-nnoremap <C-p> :Files<CR>
-
-nmap <F4> <Plug>(JavaComplete-Imports-AddSmart)
-imap <F4> <Plug>(JavaComplete-Imports-AddSmart)
-nmap <F5> <Plug>(JavaComplete-Imports-Add)
-imap <F5> <Plug>(JavaComplete-Imports-Add)
-nmap <F6> <Plug>(JavaComplete-Imports-AddMissing)
-imap <F6> <Plug>(JavaComplete-Imports-AddMissing)
-nmap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
-imap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
-
-"alternative setting for minimal https://github.com/mhinz/vim-galore/blob/master/static/minimal-vimrc.vim
+" Set Editor Font (FOR GINIT.VIM ONLY)
+"if exists(':GuiFont')
+"    " Use GuiFont! to ignore font errors
+"    GuiFont! CaskaydiaCove NF:h12
+"endif
+"
+"" Disable GUI Tabline
+"if exists(':GuiTabline')
+"    GuiTabline 0
+"endif
+"
+"" Disable GUI Popupmenu
+"if exists(':GuiPopupmenu')
+"    GuiPopupmenu 1
+"endif
+"
+"" Enable GUI ScrollBar
+"if exists(':GuiScrollBar')
+"    GuiScrollBar 1
+"endif
+"
+"" Enable Ligatures
+"if exists(':GuiRenderLigatures')
+"    GuiRenderLigatures 1
+"endif
+"
+"" Right Click Context Menu (Copy-Cut-Paste)
+"nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+"inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
+"xnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>gv
+"snoremap <silent><RightMouse> <C-G>:call GuiShowContextMenu()<CR>gv
+"
