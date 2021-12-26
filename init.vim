@@ -1,7 +1,7 @@
+" ============================================================================
 syntax on
 filetype plugin indent on
 
-" ---------------------------- SET ----------------------------
 set tabstop=4 softtabstop=4
 set shiftwidth=4
 set expandtab
@@ -18,7 +18,7 @@ set nobackup
 set undofile
 set scrolloff=8
 set colorcolumn=80
-set signcolumn=yes
+set signcolumn=number
 set mouse=a
 set splitbelow splitright
 set termguicolors
@@ -35,15 +35,137 @@ set listchars=eol:↓,tab:\ \ ┊,trail:●,extends:…,precedes:…,space:·
 set list
 set cmdheight=2
 set shortmess+=c
-" ---------------------------- SET ----------------------------
+set encoding=utf-8
+set completeopt=menu,menuone,noinsert,noselect
 
-autocmd BufWritePre * %s/\s\+$//e " Remove trailing whitespace
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
-autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd BufWritePre * %s/\s\+$//e
+" ============================================================================
 
-" ---------------------------- Essential Map ----------------------------
+" ============================================================================
+call plug#begin()
+" ----------------------------------------------------------------------------
+Plug 'rebelot/kanagawa.nvim'                                   "Kanagawa Theme
+" ----------------------------------------------------------------------------
+Plug 'vim-airline/vim-airline'                            "Airline Status Line
+Plug 'vim-airline/vim-airline-themes'                           "Airline Theme
+" ----------------------------------------------------------------------------
+Plug 'tpope/vim-surround'                             "Close and Declose pairs
+Plug 'Raimondi/delimitMate'                                    "AutoClose Pair
+" ----------------------------------------------------------------------------
+Plug 'tpope/vim-commentary'                                   "Auto Commenting
+" ----------------------------------------------------------------------------
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}       "Tree Sitter
+" ----------------------------------------------------------------------------
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'                             "Fuzzy Finder
+" ----------------------------------------------------------------------------
+Plug 'neovim/nvim-lspconfig'                                       "LSP Config
+" ----------------------------------------------------------------------------
+Plug 'onsails/lspkind-nvim'                                         "Pictogram
+" ----------------------------------------------------------------------------
+Plug 'airblade/vim-gitgutter'                                             "Git
+Plug 'tpope/vim-fugitive'                                                 "Git
+" ----------------------------------------------------------------------------
+Plug 'artur-shaik/vim-javacomplete2'                          "Java autocompletion
+" ----------------------------------------------------------------------------
+Plug 'neoclide/coc.nvim', {'branch': 'release'}                "Autocompletion
+" ----------------------------------------------------------------------------
+Plug 'preservim/nerdtree' |                                         "File tree
+    \ Plug 'Xuyuanp/nerdtree-git-plugin' |
+    \ Plug 'ryanoasis/vim-devicons'                                "File Icons
+Plug 'ryanoasis/vim-devicons'
+Plug 'PhilRunninger/nerdtree-visual-selection'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" ----------------------------------------------------------------------------
+call plug#end()
+" ============================================================================
+
+colorscheme kanagawa
+
+let g:NERDTreeGitStatusUseNerdFonts = 1 " you should install nerdfonts by yourself. default: 0
+let g:NEDTreeGitStatusShowClean = 1 " default: 0
+
+
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#left_sep = "\ue0b4 "
+let g:airline#extensions#tabline#left_alt_sep = " "
+let g:airline#extensions#tabline#right_sep = "\ue0b6"
+let g:airline#extensions#tabline#right_alt_sep = " "
+let g:airline_left_sep = "\ue0b4 "
+let g:airline_right_sep = "\ue0b6"
+let g:airline_theme = 'badwolf'
+let g:airline#extensions#coc#enabled = 1
+let g:airline#extensions#coc#error_symbol = "\uf06a Error: "
+let g:airline#extensions#coc#warning_symbol = "\uf071 Warning: "
+
+let NERDTreeCustomOpenArgs={'file':{'where':'p','keepopen':1,'stay':1}}
+let NERDTreeShowHidden=1
+let g:NERDTreeWinPos="right"
+
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+source $HOME/.config/nvim/nvimtree_setup/nvimtree_setup.vim
+
+lua << EOF
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+local lspconfig = require'lspconfig'
+local configs = require'lspconfig/configs'
+
+
+lspconfig.jdtls.setup{
+   cmd = { 'jdtls' },
+   root_dir = function(fname)
+      return lspconfig.util.root_pattern('pom.xml', 'gradle.build', '.git')(fname) or vim.fn.getcwd()
+   end
+}
+
+lspconfig.tsserver.setup {}
+lspconfig.html.setup { capabilities = capabilities, }
+lspconfig.jsonls.setup { capabilities = capabilities, }
+lspconfig.cssls.setup { capabilities = capabilities, }
+
+if not lspconfig.emmet_ls then
+  configs.emmet_ls = {
+    default_config = {
+      cmd = {'emmet-ls', '--stdio'};
+      filetypes = {'html', 'css', 'blade'};
+      root_dir = function(fname)
+        return vim.loop.cwd()
+      end;
+      settings = {};
+    };
+  }
+end
+lspconfig.emmet_ls.setup{ capabilities = capabilities; }
+
+lspconfig.eslint.setup {}
+
+require'nvim-treesitter.configs'.setup {
+    highlight = { enable = true, },
+    indent = { enable = true, },
+    incremental_selection = {
+    enable = true,
+    keymaps = {
+        init_selection = "gnn",
+        node_incremental = "grn",
+        scope_incremental = "grc",
+        node_decremental = "grm",
+        },
+    },
+}
+
+EOF
+
+" ============================================================================
+let mapleader = " "
 inoremap aj <ESC>:w<CR>
 vnoremap aj <ESC>:w<CR>
+nnoremap aj <ESC>:w<CR>
 nnoremap <leader>w <ESC>:w<CR>
 
 nnoremap <C-c><C-f> :e ~/.config/nvim/init.vim<CR>
@@ -89,85 +211,92 @@ inoremap { {<C-g>u
 inoremap " "<C-g>u
 inoremap ' '<C-g>u
 inoremap < <<C-g>u
-" ---------------------------- Essential Map ----------------------------
 
-call plug#begin()
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
-Plug 'sainnhe/everforest'                               "everforest theme
+nnoremap <C-n> :NERDTreeToggle<CR>
 
-Plug 'vim-airline/vim-airline'                          "Status Line
-Plug 'vim-airline/vim-airline-themes'                   "Theme for Status Line
+" ============================================================================
 
-Plug 'tpope/vim-surround'                               "Close and Declose pairs
-Plug 'Raimondi/delimitMate'                             "Autoclose
+" ============================================================================
+lua << EOF
+local nvim_lsp = require('lspconfig')
 
-Plug 'honza/vim-snippets'                               "Snippets
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-Plug 'preservim/nerdtree'                               "File System
-Plug 'ryanoasis/vim-devicons'                           "Icon for File System
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'          "Syntax for File System
+-- Enable completion triggered by <c-x><c-o>
+buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }     "Fuzzy Finder
-Plug 'junegunn/fzf.vim'                                 "Fuzzy Finder
+-- Mappings.
+local opts = { noremap=true, silent=true }
 
-Plug 'artur-shaik/vim-javacomplete2'                    "Autogenerate for Java
+-- See `:help vim.lsp.*` for documentation on any of the below functions
+buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}         "Autocomplete
-let g:coc_global_extensions = ['coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-tsserver', 'coc-java', 'coc-clangd']
+end
 
-Plug 'tpope/vim-commentary'                             "Auto Commenting
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = { 'pyright', 'rust_analyzer', 'tsserver', 'html', 'cssls', 'emmet_ls', 'jsonls', 'eslint' }
 
-call plug#end()
+for _, lsp in ipairs(servers) do
+    nvim_lsp[lsp].setup {
+        on_attach = on_attach,
+        flags = {
+            debounce_text_changes = 150,
+            }
+        }
+end
+EOF
+" ============================================================================
 
-" Fuzzy Finder
-nnoremap <C-p> :Files<CR>
+" COC SETTINGS
+" ============================================================================
+" Set internal encoding of vim, not needed on neovim, since coc.nvim using some
+" unicode characters in the file autoload/float.vim
+set encoding=utf-8
 
-" Autocomplete for Java
-nmap <F4> <Plug>(JavaComplete-Imports-AddSmart)
-imap <F4> <Plug>(JavaComplete-Imports-AddSmart)
-nmap <F5> <Plug>(JavaComplete-Imports-Add)
-imap <F5> <Plug>(JavaComplete-Imports-Add)
-nmap <F6> <Plug>(JavaComplete-Imports-AddMissing)
-imap <F6> <Plug>(JavaComplete-Imports-AddMissing)
-nmap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
-imap <F7> <Plug>(JavaComplete-Imports-RemoveUnused)
+" TextEdit might fail if hidden is not set.
+set hidden
 
-" Theme settings
-let g:everforest_background = 'soft'
-let g:everforest_enable_italic = 0
-let g:everforest_disable_italic_comment = 1
-let g:everforest_sign_column_background = 'none'
-let g:everforest_ui_contrast = 'high'
-let g:everforest_show_eob = 0
-let g:everforest_diagnostic_text_highlight = 1
-let g:everforest_diagnostic_line_highlight = 1
-let g:everforest_diagnostic_virtual_text = 'colored'
-let g:everforest_current_word = 'underline'
-let g:everforest_better_performance = 1
-colorscheme everforest
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
 
-let mapleader=" "
+" Give more space for displaying messages.
+set cmdheight=2
 
-" Airline settings
-let g:airline_powerline_fonts=1
-let g:airline#extensions#tabline#enabled=1
-let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline_left_sep = "\ue0b4"
-let g:airline_right_sep = "\ue0b6"
-let g:airline_theme='everforest'
-let g:airline#extensions#coc#enabled = 1
-let g:airline#extensions#coc#error_symbol = "\uf06a Error: "
-let g:airline#extensions#coc#warning_symbol = "\uf071 Warning: "
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
 
-" Nerdtree settings
-let NERDTreeCustomOpenArgs={'file':{'where':'p','keepopen':1,'stay':1}}
-let NERDTreeShowHidden=1
-let g:NERDTreeWinPos="right"
-nnoremap <leader>nt :NERDTreeToggle<CR>
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
 
-" ---------------------------- Coc setting ----------------------------
-
-" Co" Always show the signcolumn, otherwise it would shift the text each time
+" Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
 if has("nvim-0.5.0") || has("patch-8.1.1564")
   " Recently vim can merge signcolumn and number column into one
@@ -189,21 +318,6 @@ function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
-
-" Use <C-l> for trigger snippet expand.
-imap <C-l> <Plug>(coc-snippets-expand)
-
-" Use <C-j> for select text for visual placeholder of snippet.
-vmap <C-j> <Plug>(coc-snippets-select)
-
-" Use <C-j> for jump to next placeholder, it's default of coc.nvim
-let g:coc_snippet_next = '<c-j>'
-
-" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
-let g:coc_snippet_prev = '<c-k>'
-
-" Use <C-j> for both expand and jump (make expand higher priority.)
-imap <C-j> <Plug>(coc-snippets-expand-jump)
 
 " Use <c-space> to trigger completion.
 if has('nvim')
@@ -327,37 +441,4 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-" ---------------------------- Coc setting ----------------------------
-
-" Set Editor Font (FOR GINIT.VIM ONLY)
-"if exists(':GuiFont')
-"    " Use GuiFont! to ignore font errors
-"    GuiFont! CaskaydiaCove NF:h12
-"endif
-"
-"" Disable GUI Tabline
-"if exists(':GuiTabline')
-"    GuiTabline 0
-"endif
-"
-"" Disable GUI Popupmenu
-"if exists(':GuiPopupmenu')
-"    GuiPopupmenu 1
-"endif
-"
-"" Enable GUI ScrollBar
-"if exists(':GuiScrollBar')
-"    GuiScrollBar 1
-"endif
-"
-"" Enable Ligatures
-"if exists(':GuiRenderLigatures')
-"    GuiRenderLigatures 1
-"endif
-"
-"" Right Click Context Menu (Copy-Cut-Paste)
-"nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
-"inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
-"xnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>gv
-"snoremap <silent><RightMouse> <C-G>:call GuiShowContextMenu()<CR>gv
-"
+" ============================================================================
