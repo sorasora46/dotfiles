@@ -1,7 +1,7 @@
 syntax on
 filetype plugin on
 
-set clipboard=unnamed
+set clipboard=unnamedplus
 set backspace=indent,eol,start
 set tabstop=4 softtabstop=4
 set shiftwidth=4
@@ -30,8 +30,7 @@ set smartcase
 set showcmd
 set noshowmode
 set laststatus=2
-set cursorline
-set background=light
+set background=dark
 set showtabline=0
 set cmdheight=2
 set shortmess+=c
@@ -40,13 +39,12 @@ set completeopt=menu,menuone,noinsert,noselect
 set belloff=all
 set spell spelllang=en_us
 set undodir=~/vimfiles/undo//
-set guioptions=Ac
 set autochdir
 set omnifunc=syntaxcomplete#Complete
 
-autocmd BufWritePre * %s/\s\+$//e
+colorscheme torte
 
-nnoremap <C-c><C-f> :e ~/.vimrc<CR>
+autocmd BufWritePre * %s/\s\+$//e
 
 let mapleader = " "
 inoremap fj <ESC>
@@ -57,24 +55,10 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-inoremap <c-up> <c-w>+
-inoremap <c-down> <c-w>-
-inoremap <c-left> <c-w>>
-inoremap <c-right> <c-w><
-
-nnoremap <silent> <A-k> :m .-2<CR>==
-nnoremap <silent> <A-j> :m .+1<CR>==
-inoremap <silent> <A-k> <ESC>:m .-2<CR>==
-inoremap <silent> <A-j> <ESC>:m .+1<CR>==
-vnoremap <silent> <A-k> :m '<-2<CR>gv=gv
-vnoremap <silent> <A-j> :m '>+1<CR>gv=gv
-
-nnoremap <expr> k (v:count > 5 ? "m'" . v:count : "") . 'k'
-nnoremap <expr> j (v:count > 5 ? "m'" . v:count : "") . 'j'
-
-nnoremap n nzzzv
-nnoremap N Nzzzv
-nnoremap J mzJ`z
+nnoremap <C-k> :m .-2<CR>==
+nnoremap <C-j> :m .+1<CR>==
+vnoremap <C-k> :m '<-2<CR>gv=gv
+vnoremap <C-j> :m '>+1<CR>gv=gv
 
 inoremap ( (<C-g>u
 inoremap [ [<C-g>u
@@ -82,3 +66,6 @@ inoremap { {<C-g>u
 inoremap " "<C-g>u
 inoremap ' '<C-g>u
 inoremap < <<C-g>u
+
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"

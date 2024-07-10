@@ -1,5 +1,6 @@
 PROMPT_COMMAND='PS1_CMD1=$(git branch --show-current 2>/dev/null)';
 PS1='\[\e[38;5;196;1m\][\[\e[38;5;82m\]\u\[\e[0m\]@\[\e[1m\]\h\[\e[0m\]:\[\e[38;5;209;4m\]\w\[\e[0;38;5;196;1m\]]\[\e[0m\] \[\e[38;5;196;3;4m\]${PS1_CMD1}\[\e[0;38;5;41m\] \\$\[\e[0m\] '
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -62,7 +63,11 @@ export PATH=$PATH:$HOME/go/bin
 alias code="codium"
 alias dk="sudo docker"
 alias update="sudo apt update && sudo apt upgrade -y"
+alias vim="vi"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# use vim to edit command when in bash
+set -o vi
