@@ -37,7 +37,8 @@ set shortmess+=c
 set encoding=utf-8
 set completeopt=menu,menuone,noinsert,noselect
 set belloff=all
-set spell spelllang=en_us
+" set spell spelllang=en_us
+set nospell
 set undodir=~/vimfiles/undo//
 set autochdir
 set omnifunc=syntaxcomplete#Complete
@@ -69,3 +70,4 @@ inoremap < <<C-g>u
 
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
+
