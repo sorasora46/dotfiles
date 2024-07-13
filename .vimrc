@@ -19,7 +19,7 @@ set nobackup
 set nowritebackup
 set undofile
 set scrolloff=10
-set colorcolumn=80
+" set colorcolumn=80
 set signcolumn=number
 set mouse=a
 set splitbelow splitright
