@@ -72,3 +72,8 @@ export NVM_DIR="$HOME/.nvm"
 set -o vi
 
 export PATH=$HOME/.local/bin:$PATH
+
+# for java 17
+export PATH=$PATH:$HOME/.jdks/corretto-17.0.11/bin
+# for java 22
+# export PATH=$PATH:$HOME/.jdks/openjdk-22.0.1/bin
